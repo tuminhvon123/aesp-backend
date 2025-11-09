@@ -1,5 +1,6 @@
-users = {
-    "admin@aesp.com": {"password": "admin123", "role": "admin"},
-    "mentor@aesp.com": {"password": "mentor123", "role": "mentor"},
-    "learner@aesp.com": {"password": "learner123", "role": "learner"}
-}
+# Tạm thời chỉ để placeholder
+class User:
+    def __init__(self, username, password, role):
+        self.username = username
+        self.password = password
+        self.role = role

@@ -1,2 +1,4 @@
-Flask
-PyJWT
+flask
+flask-cors
+flask-bcrypt
+pyjwt
