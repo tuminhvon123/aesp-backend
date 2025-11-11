@@ -1,21 +1,12 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-
 dotenv.config();
 
-const db = mysql.createConnection({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("❌ Kết nối MySQL thất bại:", err);
-  } else {
-    console.log("✅ Kết nối MySQL thành công (learning-service)");
-  }
-});
-
-export default db;
+export default pool;
