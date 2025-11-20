@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # --- Service Backend ---
+  backend:
+    # Chú ý: Tên folder phải khớp chính xác với tên folder của bạn
+    build: ./aesp-backend
+    ports:
+      - "5000:5000" # Trái: máy bạn, Phải: code
+    environment:
+      - PORT=5000
+      # Nếu có kết nối Database, điền thêm vào đây
+      # - MONGO_URI=mongodb://mongo:27017/aespproject 
+
+  # --- Service Frontend ---
+  frontend:
+    build: ./aesp-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend # Frontend sẽ chờ Backend chạy trước
+
+  # (Tùy chọn) Database MongoDB nếu dự án có dùng
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
