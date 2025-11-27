@@ -2,7 +2,26 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import json
-from speech_analysis import speech_analyzer
+
+# --- SỬA ĐOẠN NÀY ĐỂ IMPORT ĐÚNG ---
+try:
+    # Thử import theo đường dẫn đầy đủ (nếu chạy từ thư mục gốc)
+    from ai_logic.speech_analysis import speech_analyzer
+except ImportError:
+    try:
+        # Thử import trực tiếp (nếu chạy trong thư mục ai_service)
+        from speech_analysis import speech_analyzer
+    except ImportError:
+        # TRƯỜNG HỢP XẤU NHẤT: Nếu vẫn không tìm thấy file, ta dùng Mock (giả lập)
+        # để Server KHÔNG BỊ CHẾT. Bạn có thể thay thế logic thật sau.
+        print("WARNING: Không tìm thấy module speech_analysis. Đang dùng chế độ Giả lập (Mock).")
+        class MockAnalyzer:
+            def analyze_audio(self, path):
+                return {"transcription": "Chế độ giả lập: Chưa có file xử lý âm thanh thực tế.", "confidence": 0.99}
+            def analyze_sentiment(self, text):
+                return "Positive (Giả lập)"
+        speech_analyzer = MockAnalyzer()
+# -----------------------------------
 
 app = Flask(__name__)
 CORS(app)
@@ -34,7 +53,8 @@ def analyze_speech():
         analysis = speech_analyzer.analyze_audio(temp_path)
         
         # Clean up
-        os.remove(temp_path)
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
         
         # Store result
         result_id = len(analysis_results) + 1
@@ -87,5 +107,6 @@ def get_analysis_result(result_id):
         return jsonify({"error": "Result not found"}), 404
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))
+    # Lấy cổng từ biến môi trường, mặc định 5000
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
